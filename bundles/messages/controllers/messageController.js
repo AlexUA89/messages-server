@@ -71,16 +71,20 @@ var helper = {
 
     getPrivateMessages: function (req, res, next) {
         var time = Number(req.query.time);
+        logger.crit('started get message');
         async.waterfall([
             function (callback) {
                 requestGetMessValidator.privateValidate(req, next, callback);
+                logger.crit('finished checking paramteters ');
             },
             function (callback) {
                 Message.find({toUserId: req.jwtUser._id}).where('time').gt(new Date(time))
                     .exec(callback);
+                logger.crit('getting data req.jwtUser._id = '+req.jwtUser._id + " new Date(time) "+ new Date(time));
             },
             function (messages, callback) {
                 var result = [];
+                logger.crit('messages = '+messages);
                 messages.forEach(function (message) {
                     result.push(message);
                 });
