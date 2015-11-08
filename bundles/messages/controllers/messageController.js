@@ -1,5 +1,6 @@
 var Message = require('models').Message;
 var async = require('neo-async');
+var logger =  require('libs/log');
 var responseHelper = require('helpers').responseHelper;
 var requestSendMessValidator = require('../validators/requestSendMessValidator');
 var requestGetMessValidator = require('../validators/requestGetMessValidator');
