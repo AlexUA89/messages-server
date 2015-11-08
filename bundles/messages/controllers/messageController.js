@@ -79,6 +79,7 @@ var helper = {
                 logger.crit('finished checking paramteters ');
             },
             function (callback) {
+                logger.crit('before getting data req.jwtUser._id = '+req.jwtUser._id + " new Date(time) "+ new Date(time));
                 Message.find({toUserId: req.jwtUser._id}).where('time').gt(new Date(time))
                     .exec(callback);
                 logger.crit('getting data req.jwtUser._id = '+req.jwtUser._id + " new Date(time) "+ new Date(time));
