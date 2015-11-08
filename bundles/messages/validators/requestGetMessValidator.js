@@ -25,7 +25,7 @@ exports.validate = function(req, next, callback){
 exports.privateValidate = function(req, next, callback){
 
     req.checkQuery('time', 'Should have from what time').notEmpty();
-
+    logger.crit('privateValidate checking');
     var errors = req.validationErrors();
     if (errors) {
         return next(errors);
