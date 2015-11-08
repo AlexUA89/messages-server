@@ -1,0 +1,28 @@
+{
+  "name": "Social Map Express API",
+  "version": "0.0.1",
+  "authors": [
+    "montereyy <vorobyov-alexander@mail.ru>"
+  ],
+  "description": "The API for the social map app",
+  "main": "app.js",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "API",
+    "Social",
+    "Map"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5"
+  }
+}

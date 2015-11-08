@@ -1,0 +1,20 @@
+{
+  "apps": [
+    {
+      "name": "messages-api",
+      "script": "./app.js",
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "error_file": "./logs/messages-errors.log",
+      "out_file": "./logs/messages-stdout.log",
+      "pid_file": "./logs/another-pid.log",
+      "watch"       : "true",
+      "exec_mode" : "cluster",
+      "instances" : -1,
+      "env": {
+        "NODE_PATH": ".",
+        "NODE_ENV": "production",
+        "PORT": 3000
+      }
+    }
+  ]
+}
