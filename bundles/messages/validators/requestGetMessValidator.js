@@ -29,8 +29,8 @@ exports.privateValidate = function(req, next, callback){
     var errors = req.validationErrors();
     logger.crit('privateValidate errors '+ errors);
     if (errors) {
-        return next(errors);
         logger.crit('privateValidate error');
+        return next(errors);
     }
     callback();
 };
