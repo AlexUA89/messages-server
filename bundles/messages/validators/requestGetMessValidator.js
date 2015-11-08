@@ -1,4 +1,3 @@
-var logger =  require('libs/log');
 /**
  * Validates the request from get message
  *
@@ -25,11 +24,9 @@ exports.validate = function(req, next, callback){
 exports.privateValidate = function(req, next, callback){
 
     req.checkQuery('time', 'Should have from what time').notEmpty();
-    logger.crit('privateValidate checking');
+
     var errors = req.validationErrors();
-    logger.crit('privateValidate errors '+ errors);
     if (errors) {
-        logger.crit('privateValidate error');
         return next(errors);
     }
     callback();
