@@ -53,6 +53,8 @@ if(!!process.env.PORT){
     port = config.get( "port" );
 }
 
+logger.crit('trying use port ' + port );
+
 var server = app.listen( port, function () {
     logger.crit('On port ' + port );
 } );
