@@ -1,3 +1,4 @@
+var logger =  require('libs/log');
 /**
  * Validates the request from get message
  *
@@ -28,6 +29,7 @@ exports.privateValidate = function(req, next, callback){
     var errors = req.validationErrors();
     if (errors) {
         return next(errors);
+        logger.crit('privateValidate error');
     }
     callback();
 };
