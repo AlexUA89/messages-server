@@ -9,7 +9,7 @@
       "pid_file": "./logs/another-pid.log",
       "watch"       : "true",
       "exec_mode" : "cluster",
-      "instances" : 2,
+      "instances" : 1,
       "env": {
         "NODE_PATH": ".",
         "NODE_ENV": "production",
