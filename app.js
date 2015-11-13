@@ -38,7 +38,8 @@ app.use( flash() ); // use connect-flash for flash messages stored in session
 
 app.locals.pageTitle = 'Social Map API';
 
-historyCleaner.init(app);
+//TODO uncoment for prod
+//historyCleaner.init(app);
 
 app.use(require('express-domain-middleware'));
 
