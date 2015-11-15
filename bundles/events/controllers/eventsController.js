@@ -1,16 +1,11 @@
 var Event = require('models').Event;
 var async = require('neo-async');
 var responseHelper = require('helpers').responseHelper;
-var registerEventValidator = require('../validators/registerEventValidator');
-var getEventValidator = require('../validators/getEventValidator');
 
 var manager = {
 
     registerEvent: function (req, res, next) {
         async.waterfall([
-            function (callback) {
-                registerEventValidator.validate(req, next, callback);
-            },
             function (callback) {
                 var event = new Event({
                     name: req.body.name,
@@ -39,9 +34,6 @@ var manager = {
         var category = req.params.category;
 
         async.waterfall([
-            function (callback) {
-                getEventValidator.validate(req, next, callback);
-            },
             function (callback) {
                 var query;
                 Event.find().where('yCoord').gt(yCoord - radius).lt(yCoord + radius)

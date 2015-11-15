@@ -1,21 +1,20 @@
+var responseHelper = require('helpers').responseHelper;
 /**
  * Validates the request from reset password
  *
  * @param req
  * @param res
  */
-exports.validate = function ( req, res ) {
+exports.validate = function (req, res, next) {
 
     req.checkBody('email', 'Email is required').notEmpty();
     req.checkBody('email', 'Email does not appear to be valid').isEmail();
 
     var errors = req.validationErrors();
-
     if (errors) {
-        return errors;
+        responseHelper.respondWithManyErrors(res, errors, 403);
     }
-
-    return true;
+    next();
 };
 
 
@@ -25,17 +24,15 @@ exports.validate = function ( req, res ) {
  * @param req
  * @param res
  */
-exports.validateNewPass = function(req,res) {
+exports.validateNewPass = function(req, res, next) {
 
     req.checkBody('password', 'Password is required').notEmpty();
     req.checkBody('password_confirm', 'Password confirmation is required').notEmpty();
     req.checkBody('password', 'Passwords do no match').equals(req.body.password_confirm);
 
     var errors = req.validationErrors();
-
     if (errors) {
-        return errors;
+        responseHelper.respondWithManyErrors(res, errors, 403);
     }
-
-    return true;
+    next();
 };

@@ -4,6 +4,10 @@ var authController = require('./controllers/authController.js');
 var requireDir = require( 'require-dir' );
 var middlewares = requireDir('../../middlewares');
 
+var signupValidatior = require('./validators/signupValidator');
+var signinValidatior = require('./validators/signinValidator');
+var resetPassValidator = require('./validators/resetPassValidator');
+
 var accountRouter = {
 
     baseRoute: "/auth",
@@ -14,11 +18,11 @@ var accountRouter = {
 
         router.post('/google', authController.googleAction);
 
-        router.post('/signup', authController.signupAction);
+        router.post('/signup', signupValidatior.validate, authController.signupAction);
 
-        router.post('/signin', authController.signinAction);
+        router.post('/signin', signinValidatior.validate, authController.signinAction);
 
-        router.post('/reset', authController.resetPassAction);
+        router.post('/reset', resetPassValidator.validate, authController.resetPassAction);
 
         router.get('/all_friends', middlewares.jwt.isLoggedIn, authController.getAllFriends);
 
@@ -50,7 +54,7 @@ var accountRouter = {
 
         router.get('/confirm/:token', authController.confirmEmailAction);
         router.get('/reset/:token', authController.resetPassFormAction);
-        router.post('/reset/:token', authController.resetPassHandleAction);
+        router.post('/reset/:token', resetPassValidator.validateNewPass, authController.resetPassHandleAction);
 
         return router;
     }

@@ -1,7 +1,7 @@
 var express = require( 'express' );
-var logger = require('libs/log')
+var logger = require('libs/log');
 var expressLayouts = require( 'express-ejs-layouts' );
-var errorHandler = require('middlewares/errorHandler')
+var errorHandler = require('middlewares/errorHandler');
 
 var router = require( './routes' );
 var config = require( 'configuration' );

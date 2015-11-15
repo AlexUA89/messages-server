@@ -5,14 +5,14 @@
  * @param next
  * @param callback
  */
-exports.validate = function (req, next, callback) {
+exports.validate = function (req, res, next) {
 
     req.checkParams('xCoord', 'Should have coordinates').notEmpty();
     req.checkParams('yCoord', 'Should have coordinates').notEmpty();
     req.checkParams('radius', 'Should have radius').notEmpty();
     var errors = req.validationErrors();
     if (errors) {
-        return next(errors);
+        responseHelper.respondWithManyErrors(res, errors, 403);
     }
-    callback();
+    next();
 };

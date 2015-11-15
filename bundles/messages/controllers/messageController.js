@@ -1,18 +1,12 @@
 var Message = require('models').Message;
 var async = require('neo-async');
 var responseHelper = require('helpers').responseHelper;
-var requestSendMessValidator = require('../validators/requestSendMessValidator');
-var requestGetMessValidator = require('../validators/requestGetMessValidator');
 
 var helper = {
 
     sendMessage: function (req, res, next) {
         async.waterfall([
             function (callback) {
-                requestSendMessValidator.validate(req, next, callback);
-            },
-            function (callback) {
-
                 var message = new Message({
                     message: req.body.message,
                     xCoord: req.body.xCoord,
@@ -36,10 +30,6 @@ var helper = {
 
         async.waterfall([
             function (callback) {
-                requestGetMessValidator.validate(req, next, callback);
-            },
-            function (callback) {
-
                 var xCoord = req.params.xCoord;
                 var yCoord = req.params.yCoord;
                 var radius = req.params.radius;
@@ -73,9 +63,6 @@ var helper = {
         var time = Number(req.query.time);
         async.waterfall([
             function (callback) {
-                requestGetMessValidator.privateValidate(req, next, callback);
-            },
-            function (callback) {
                 Message.find({toUserId: req.jwtUser._id}).where('time').gt(new Date(time))
                     .exec(callback);
             },
@@ -99,9 +86,6 @@ var helper = {
         var time = Number(req.query.time);
         var groupId = req.query.groupId;
         async.waterfall([
-            function (callback) {
-                requestGetMessValidator.groupValidate(req, next, callback);
-            },
             function (callback) {
                 Message.find({chatGroupId: groupId}).where('time').gt(new Date(time))
                     .exec(callback);

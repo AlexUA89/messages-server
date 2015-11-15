@@ -32,6 +32,11 @@ var messageSchema = new Schema({
         required: true
     },
 
+    userName: {
+        type: String,
+        required: true
+    },
+
     time: {
         type: Date,
         required: true

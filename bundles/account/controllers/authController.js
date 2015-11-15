@@ -9,8 +9,6 @@ var async = require('neo-async');
 var responseHelper = require('helpers').responseHelper;
 var mailerHelper = require('helpers').mailerHelper;
 
-var signupValidatior = require('../validators/signupValidator');
-var signinValidatior = require('../validators/signinValidator');
 var resetPassValidator = require('../validators/resetPassValidator');
 
 
@@ -223,8 +221,6 @@ function updateGoogleUser(result, res, user, token) {
  */
 exports.signupAction = function (req, res) {
 
-    var result = signupValidatior.validate(req, res);
-
     if (result !== true) {
         responseHelper.respondWithManyErrors(res, result, 400);
     }
@@ -307,7 +303,7 @@ function newLocalUser(req, res) {
 
         mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-        responseHelper.respondWithOneError(res, 'You need to confirm your email.', 403);
+        responseHelper.respondWithOneError(res, 'You need to confirm your email.', 200);
     });
 }
 
@@ -319,8 +315,6 @@ function newLocalUser(req, res) {
  * @param res
  */
 exports.signinAction = function (req, res) {
-
-    var result = signinValidatior.validate(req, res);
 
     if (result !== true) {
         responseHelper.respondWithManyErrors(res, result, 400);
@@ -395,8 +389,6 @@ exports.confirmEmailAction = function (req, res) {
  */
 exports.resetPassAction = function (req, res) {
 
-    var result = resetPassValidator.validate(req, res);
-
     if (result !== true) {
 
         responseHelper.respondWithManyErrors(res, result, 400);
@@ -439,9 +431,6 @@ exports.resetPassFormAction = function (req, res) {
  * @param res
  */
 exports.resetPassHandleAction = function (req, res) {
-
-    var result = resetPassValidator.validateNewPass(req, res);
-
     if (result !== true) {
         console.log(result);
         res.render('auth/reset', {
@@ -543,7 +532,11 @@ exports.getUserInfo = function (req, res) {
             responseHelper.respondWithOneError(res, err, 500);
             throw err;
         }
-
+        delete user.password;
+        delete user.reset_token;
+        delete user.facebook;
+        delete user.google;
+        delete user.friends;
         responseHelper.respondWithOneSuccess(res, user);
     })
 };

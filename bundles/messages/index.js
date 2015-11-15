@@ -1,8 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var messageController = require('./controllers/messageController');
+var requestGetMessValidator = require('./validators/requestGetMessValidator');
+var requestSendMessValidator = require('./validators/requestSendMessValidator');
 var requireDir = require('require-dir');
-var middlewares = requireDir('../../middlewares');
+var loginChecker = requireDir('../../middlewares');
 
 var messagesRouter = {
 
@@ -10,13 +12,13 @@ var messagesRouter = {
 
     init: function () {
 
-        router.post('/send', middlewares.jwt.isLoggedIn, messageController.sendMessage);
+        router.post('/send', loginChecker.jwt.isLoggedIn, requestSendMessValidator.validate, messageController.sendMessage);
 
-        router.get('/get', middlewares.jwt.isLoggedIn, messageController.getMessages);
+        router.get('/get', loginChecker.jwt.isLoggedIn, requestGetMessValidator.validate, messageController.getMessages);
 
-        router.get('/getPrivate', middlewares.jwt.isLoggedIn, messageController.getPrivateMessages);
+        router.get('/getPrivate', loginChecker.jwt.isLoggedIn, requestGetMessValidator.privateValidate, messageController.getPrivateMessages);
 
-        router.get('/getGroup', middlewares.jwt.isLoggedIn, messageController.getGroupsMessages);
+        router.get('/getGroup', loginChecker.jwt.isLoggedIn, requestGetMessValidator.groupValidate , messageController.getGroupsMessages);
 
         return router;
     }
