@@ -1,4 +1,5 @@
 var database = require('libs/db');
+var logger = require('libs/log');
 var config = require('configuration');
 var Message = require('models').Message;
 var async = require('neo-async');
@@ -13,14 +14,13 @@ var cleaner = {
                 if (err) {
                     throw err;
                 }
-                console.log('database cleaned');
+                self.init();
             });
             self.init();
         }, config.get('history_cleaner:timeout_min') * 60 * 1000).unref();
     },
 
     workflow: function (callback) {
-        var self = this;
         var fromTime = new Date().getTime() - config.get("history_cleaner:leave_time") * 60 * 1000;
         async.waterfall([
                 function (callback) {
@@ -39,7 +39,8 @@ var cleaner = {
                 if (err) {
                     throw err;
                 }
-                console.log("Database cleaned");
+                logger.warn('Database cleaned');
+                callback()
             });
     }
 };
