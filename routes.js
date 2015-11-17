@@ -19,10 +19,6 @@ exports.setRoutes = function (app) {
         app.use(messagesRouter.baseRoute, messagesRouter.init(app));
     }
 
-    app.get('/clients_parameters', function(req,res) {
-        res.json(require('configuration/clientConfig.json'));
-    });
-
     app.get('/', function (req, res) {
 
         res.render('home/index');

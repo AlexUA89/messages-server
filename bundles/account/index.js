@@ -3,6 +3,7 @@ var router = express.Router();
 var authController = require('./controllers/authController.js');
 var requireDir = require( 'require-dir' );
 var middlewares = requireDir('../../middlewares');
+var config = require( 'configuration' );
 
 var signupValidatior = require('./validators/signupValidator');
 var signinValidatior = require('./validators/signinValidator');
@@ -13,6 +14,10 @@ var accountRouter = {
     baseRoute: "/auth",
 
     init: function (app) {
+
+        router.get('/clients_parameters',  middlewares.jwt.isLoggedIn, function(req,res) {
+            res.json(config.get('clientConfig'));
+        });
 
         router.post('/facebook', authController.facebookAction);
 
