@@ -12,6 +12,7 @@ var helper = {
                     xCoord: req.body.xCoord,
                     yCoord: req.body.yCoord,
                     toUserId: req.body.toUserId,
+                    chatGroupId: req.body.chatGroupId,
                     userId: req.jwtUser._id,
                     userName: req.jwtUser.name,
                     time: new Date().getTime()
@@ -64,7 +65,7 @@ var helper = {
         var time = Number(req.query.time);
         async.waterfall([
             function (callback) {
-                Message.find({toUserId: req.jwtUser._id}).where('time').gt(new Date(time))
+                Message.find({toUserId: req.jwtUser._id}).where('time').gt(time)
                     .exec(callback);
             },
             function (messages, callback) {
