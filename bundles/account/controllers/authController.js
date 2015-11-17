@@ -529,7 +529,7 @@ function getCompiledUser(user, token) {
     return {
         success: true,
         data: {
-            jwt_token: token,
+            token: token,
             user_id: user._id,
             name: user.name,
             email: user.email
