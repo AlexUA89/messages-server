@@ -39,7 +39,7 @@ var helper = {
 
                 var currentTime = new Date().getTime();
                 Message.find().where('yCoord').gt(yCoord - radius).lt(yCoord + radius)
-                    .where('xCoord').gt(xCoord - radius).lt(xCoord + radius).where('time').gt(new Date(currentTime - time))
+                    .where('xCoord').gt(xCoord - radius).lt(xCoord + radius).where('time').gt(currentTime - time)
                     .exec(callback);
             },
             function (messages, callback) {
@@ -62,10 +62,11 @@ var helper = {
     },
 
     getPrivateMessages: function (req, res, next) {
-        var time = Number(req.query.time);
+        var time = Number(req.params.time) * 1000;
         async.waterfall([
             function (callback) {
-                Message.find({toUserId: req.jwtUser._id}).where('time').gt(time)
+                var currentTime = new Date().getTime();
+                Message.find({toUserId: req.jwtUser._id}).where('time').gt(currentTime - time)
                     .exec(callback);
             },
             function (messages, callback) {
@@ -85,11 +86,12 @@ var helper = {
 
 
     getGroupsMessages: function (req, res, next) {
-        var time = Number(req.query.time);
+        var time = Number(req.params.time) * 1000;
         var groupId = req.query.groupId;
         async.waterfall([
             function (callback) {
-                Message.find({chatGroupId: groupId}).where('time').gt(new Date(time))
+                var currentTime = new Date().getTime();
+                Message.find({chatGroupId: groupId}).where('time').gt(currentTime - time)
                     .exec(callback);
             },
             function (messages, callback) {
