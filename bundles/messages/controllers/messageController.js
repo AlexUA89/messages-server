@@ -35,7 +35,7 @@ var helper = {
                 var xCoord = req.params.xCoord;
                 var yCoord = req.params.yCoord;
                 var radius = req.params.radius;
-                var time = Number(req.params.time) * 1000;
+                var time = Number(req.query.time) * 1000;
 
                 var currentTime = new Date().getTime();
                 Message.find().where('yCoord').gt(yCoord - radius).lt(yCoord + radius)
@@ -62,7 +62,7 @@ var helper = {
     },
 
     getPrivateMessages: function (req, res, next) {
-        var time = Number(req.params.time) * 1000;
+        var time = Number(req.query.time) * 1000;
         async.waterfall([
             function (callback) {
                 var currentTime = new Date().getTime();
@@ -86,7 +86,7 @@ var helper = {
 
 
     getGroupsMessages: function (req, res, next) {
-        var time = Number(req.params.time) * 1000;
+        var time = Number(req.query.time) * 1000;
         var groupId = req.query.groupId;
         async.waterfall([
             function (callback) {

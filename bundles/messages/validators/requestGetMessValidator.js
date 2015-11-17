@@ -13,7 +13,6 @@ exports.validate = function(req, res, next){
     req.checkBody('xCoord', 'Should have coordinates').notEmpty();
     req.checkBody('yCoord', 'Should have coordinates').notEmpty();
     req.checkBody('time', 'Should have from what time').notEmpty();
-    req.checkBody('toUserId', 'User should be define').notEmpty();
 
     var errors = req.validationErrors();
     if (errors) {

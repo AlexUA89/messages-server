@@ -28,10 +28,10 @@ var manager = {
     },
 
     getEvents: function (req, res, next) {
-        var xCoord = req.params.xCoord;
-        var yCoord = req.params.yCoord;
-        var radius = req.params.radius;
-        var category = req.params.category;
+        var xCoord = req.query.xCoord;
+        var yCoord = req.query.yCoord;
+        var radius = req.query.radius;
+        var category = req.query.category;
 
         async.waterfall([
             function (callback) {
