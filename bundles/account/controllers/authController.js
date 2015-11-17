@@ -221,33 +221,27 @@ function updateGoogleUser(result, res, user, token) {
  */
 exports.signupAction = function (req, res) {
 
-    if (result !== true) {
-        responseHelper.respondWithManyErrors(res, result, 400);
-    }
-    else {
+    User.findOne({'name': req.body.name}, function (err, user) {
 
-        User.findOne({'name': req.body.name}, function (err, user) {
+        if (!user) {
 
-            if (!user) {
+            newLocalUser(req, res);
+        }
+        else if (typeof user.password === 'undefined' && typeof user.confirmed === 'undefined') {
 
-                newLocalUser(req, res);
-            }
-            else if (typeof user.password === 'undefined' && typeof user.confirmed === 'undefined') {
+            updateLocalUser(req, res, user);
+        }
+        else if (user.confirmed === false) {
 
-                updateLocalUser(req, res, user);
-            }
-            else if (user.confirmed === false) {
+            mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-                mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
+            responseHelper.respondWithOneError(res, 'Go to the inbox and confirm your email.', 403);
+        }
+        else {
 
-                responseHelper.respondWithOneError(res, 'Go to the inbox and confirm your email.', 403);
-            }
-            else {
-
-                responseHelper.respondWithOneError(res, 'User already exists.', 403);
-            }
-        });
-    }
+            responseHelper.respondWithOneError(res, 'User already exists.', 403);
+        }
+    });
 };
 
 
@@ -316,39 +310,33 @@ function newLocalUser(req, res) {
  */
 exports.signinAction = function (req, res) {
 
-    if (result !== true) {
-        responseHelper.respondWithManyErrors(res, result, 400);
-    }
-    else {
+    var email = req.body.email;
+    var password = req.body.password;
 
-        var email = req.body.email;
-        var password = req.body.password;
+    User.findOne({'email': email}, function (err, user) {
 
-        User.findOne({'email': email}, function (err, user) {
+        if (!user) {
 
-            if (!user) {
+            responseHelper.respondWithOneError(res, 'No such user.', 403);
+        }
+        else if (user.confirmed === false) {
+
+            mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
+
+            responseHelper.respondWithOneError(res, 'Go to the inbox and confirm your email.', 403);
+        }
+        else {
+            if (user.validPassword(password)) {
+
+                var jwtToken = getJWTForUser(user);
+                res.json(getCompiledUser(user, jwtToken));
+            }
+            else {
 
                 responseHelper.respondWithOneError(res, 'No such user.', 403);
             }
-            else if (user.confirmed === false) {
-
-                mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
-
-                responseHelper.respondWithOneError(res, 'Go to the inbox and confirm your email.', 403);
-            }
-            else {
-                if (user.validPassword(password)) {
-
-                    var jwtToken = getJWTForUser(user);
-                    res.json(getCompiledUser(user, jwtToken));
-                }
-                else {
-
-                    responseHelper.respondWithOneError(res, 'No such user.', 403);
-                }
-            }
-        });
-    }
+        }
+    });
 };
 
 
@@ -389,27 +377,21 @@ exports.confirmEmailAction = function (req, res) {
  */
 exports.resetPassAction = function (req, res) {
 
-    if (result !== true) {
+    var email = req.body.email;
 
-        responseHelper.respondWithManyErrors(res, result, 400);
-    } else {
+    User.findOne({'email': email}, function (err, user) {
 
-        var email = req.body.email;
+        if (!user) {
 
-        User.findOne({'email': email}, function (err, user) {
+            responseHelper.respondWithOneError(res, 'No such user.', 403);
+        }
+        else {
 
-            if (!user) {
+            mailerHelper.sendResetEmailWithToken(user, 'emails/reset', 'Reset of the password', {}, req);
 
-                responseHelper.respondWithOneError(res, 'No such user.', 403);
-            }
-            else {
-
-                mailerHelper.sendResetEmailWithToken(user, 'emails/reset', 'Reset of the password', {}, req);
-
-                responseHelper.respondWithOneSuccess(res, 'Password reset link was sent to the email.');
-            }
-        });
-    }
+            responseHelper.respondWithOneSuccess(res, 'Password reset link was sent to the email.');
+        }
+    });
 };
 
 
@@ -431,39 +413,32 @@ exports.resetPassFormAction = function (req, res) {
  * @param res
  */
 exports.resetPassHandleAction = function (req, res) {
-    if (result !== true) {
-        console.log(result);
-        res.render('auth/reset', {
-            errors: result
-        });
-    } else {
 
-        User.findOne({'reset_token': req.params.token}, function (err, user) {
+    User.findOne({'reset_token': req.params.token}, function (err, user) {
 
-            if (err) {
-                throw err;
-            }
+        if (err) {
+            throw err;
+        }
 
-            if (!user) {
+        if (!user) {
 
-                res.redirect('/fail');
-            }
-            else {
+            res.redirect('/fail');
+        }
+        else {
 
-                user.password = user.generateHash(req.body.password);
-                user.confirmed = true;
+            user.password = user.generateHash(req.body.password);
+            user.confirmed = true;
 
-                user.save(function (err) {
+            user.save(function (err) {
 
-                    if (err) {
-                        throw err;
-                    }
+                if (err) {
+                    throw err;
+                }
 
-                    res.redirect('/success');
-                });
-            }
-        });
-    }
+                res.redirect('/success');
+            });
+        }
+    });
 };
 
 
@@ -592,7 +567,6 @@ exports.getGroupInfo = function (req, res) {
 };
 
 
-
 /**
  *
  * @param req
@@ -646,7 +620,6 @@ exports.addUserFromGroup = function (req, res) {
         responseHelper.respondWithOneSuccess(res, 'User added to group');
     });
 };
-
 
 
 /**

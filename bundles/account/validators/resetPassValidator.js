@@ -32,7 +32,9 @@ exports.validateNewPass = function(req, res, next) {
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithManyErrors(res, errors, 403);
+        res.render('auth/reset', {
+            errors: errors
+        });
     }
     next();
 };
