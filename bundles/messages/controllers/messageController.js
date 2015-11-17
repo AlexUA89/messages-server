@@ -13,6 +13,7 @@ var helper = {
                     yCoord: req.body.yCoord,
                     toUserId: req.body.toUserId,
                     userId: req.jwtUser._id,
+                    userName: req.jwtUser.name,
                     time: new Date().getTime()
                 });
                 message.save(callback);
