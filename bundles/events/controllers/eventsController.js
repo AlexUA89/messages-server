@@ -23,7 +23,7 @@ var manager = {
             if (err) {
                 throw err;
             }
-            responseHelper.respondWithOneSuccess(res, 'Event is saved.');
+            responseHelper.respondWithSuccess(res, 'Event is saved.');
         });
     },
 
@@ -57,7 +57,7 @@ var manager = {
             if (err) {
                 throw err;
             }
-            responseHelper.respondWithManySuccess(res, result);
+            responseHelper.respondWithSuccess(res, result);
         });
     }
 

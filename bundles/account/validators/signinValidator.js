@@ -13,7 +13,7 @@ exports.validate = function (req, res, next) {
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithManyErrors(res, errors, 403);
+        responseHelper.respondWithError(res, errors, 403);
     }
     next();
 };

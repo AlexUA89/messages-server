@@ -16,7 +16,7 @@ exports.validate = function(req, res, next){
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithManyErrors(res, errors, 403);
+        responseHelper.respondWithError(res, errors, 403);
     }
     next();
 };
@@ -28,7 +28,7 @@ exports.privateValidate = function(req, res, next){
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithManyErrors(res, errors, 403);
+        responseHelper.respondWithError(res, errors, 403);
     }
     next();
 };
@@ -40,7 +40,26 @@ exports.groupValidate = function(req, res, next){
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithManyErrors(res, errors, 403);
+        responseHelper.respondWithError(res, errors, 403);
+    }
+    next();
+};
+
+exports.getAllValidate = function(req, res, next){
+
+    req.checkQuery('radius_local', 'Radius local should be defined').notEmpty();
+    req.checkQuery('xCoord_local', 'Should local have coordinates').notEmpty();
+    req.checkQuery('yCoord_local', 'Should local have coordinates').notEmpty();
+
+    req.checkQuery('radius_global', 'Radius global should be defined').notEmpty();
+    req.checkQuery('xCoord_global', 'Should global have coordinates').notEmpty();
+    req.checkQuery('yCoord_global', 'Should global have coordinates').notEmpty();
+
+    req.checkQuery('time', 'Should have from what time').notEmpty();
+
+    var errors = req.validationErrors();
+    if (errors) {
+        responseHelper.respondWithError(res, errors, 403);
     }
     next();
 };

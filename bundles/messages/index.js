@@ -14,11 +14,13 @@ var messagesRouter = {
 
         router.post('/send', loginChecker.jwt.isLoggedIn, requestSendMessValidator.validate, messageController.sendMessage);
 
-        router.get('/get', loginChecker.jwt.isLoggedIn, requestGetMessValidator.validate, messageController.getMessages);
+        router.get('/get_local', loginChecker.jwt.isLoggedIn, requestGetMessValidator.validate, messageController.getMessages);
 
         router.get('/getPrivate', loginChecker.jwt.isLoggedIn, requestGetMessValidator.privateValidate, messageController.getPrivateMessages);
 
         router.get('/getGroup', loginChecker.jwt.isLoggedIn, requestGetMessValidator.groupValidate , messageController.getGroupsMessages);
+
+        router.get('/get_all_messages', loginChecker.jwt.isLoggedIn, requestGetMessValidator.getAllValidate , messageController.getAllMessages);
 
         return router;
     }

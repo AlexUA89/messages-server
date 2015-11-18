@@ -50,7 +50,7 @@ exports.facebookAction = function (req, res) {
     FB.api('me', {fields: ['id', 'name', 'email'], access_token: token}, function (result) {
 
         if (typeof result.email === 'undefined') {
-            responseHelper.respondWithOneError(res, 'Bad token provided.', 403);
+            responseHelper.respondWithError(res, 'Bad token provided.', 403);
         }
 
         User.findOne({'email': result.email}, function (err, user) {
@@ -141,7 +141,7 @@ exports.googleAction = function (req, res) {
 
         if (typeof result.emails[0].value === 'undefined') {
 
-            responseHelper.respondWithOneError(res, 'Bad token provided.', 403);
+            responseHelper.respondWithError(res, 'Bad token provided.', 403);
         }
 
         User.findOne({'email': result.emails[0].value}, function (err, user) {
@@ -235,11 +235,11 @@ exports.signupAction = function (req, res) {
 
             mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-            responseHelper.respondWithOneError(res, 'Go to the inbox and confirm your email.', 403);
+            responseHelper.respondWithError(res, 'Go to the inbox and confirm your email.', 403);
         }
         else {
 
-            responseHelper.respondWithOneError(res, 'User already exists.', 403);
+            responseHelper.respondWithError(res, 'User already exists.', 403);
         }
     });
 };
@@ -266,7 +266,7 @@ function updateLocalUser(req, res, user) {
 
         mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-        responseHelper.respondWithOneError(res, 'Looks like previously you were using social networks. You need to confirm your email now.', 403);
+        responseHelper.respondWithError(res, 'Looks like previously you were using social networks. You need to confirm your email now.', 403);
     });
 }
 
@@ -297,7 +297,7 @@ function newLocalUser(req, res) {
 
         mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-        responseHelper.respondWithOneError(res, 'You need to confirm your email.', 200);
+        responseHelper.respondWithError(res, 'You need to confirm your email.', 200);
     });
 }
 
@@ -317,13 +317,13 @@ exports.signinAction = function (req, res) {
 
         if (!user) {
 
-            responseHelper.respondWithOneError(res, 'No such user.', 403);
+            responseHelper.respondWithError(res, 'No such user.', 403);
         }
         else if (user.confirmed === false) {
 
             mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-            responseHelper.respondWithOneError(res, 'Go to the inbox and confirm your email.', 403);
+            responseHelper.respondWithError(res, 'Go to the inbox and confirm your email.', 403);
         }
         else {
             if (user.validPassword(password)) {
@@ -333,7 +333,7 @@ exports.signinAction = function (req, res) {
             }
             else {
 
-                responseHelper.respondWithOneError(res, 'No such user.', 403);
+                responseHelper.respondWithError(res, 'No such user.', 403);
             }
         }
     });
@@ -383,13 +383,13 @@ exports.resetPassAction = function (req, res) {
 
         if (!user) {
 
-            responseHelper.respondWithOneError(res, 'No such user.', 403);
+            responseHelper.respondWithError(res, 'No such user.', 403);
         }
         else {
 
             mailerHelper.sendResetEmailWithToken(user, 'emails/reset', 'Reset of the password', {}, req);
 
-            responseHelper.respondWithOneSuccess(res, 'Password reset link was sent to the email.');
+            responseHelper.respondWithSuccess(res, 'Password reset link was sent to the email.');
         }
     });
 };
@@ -446,10 +446,10 @@ exports.getAllFriends = function (req, res) {
     var userId = req.jwtUser._id;
     User.findOne({'_id': userId}).populate('friends').exec(function (err, friends) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
-        responseHelper.respondWithManySuccess(res, friends);
+        responseHelper.respondWithSuccess(res, friends);
 
     });
 };
@@ -470,10 +470,10 @@ exports.addNewFriend = function (req, res) {
         }
     ], function (err, result) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
-        responseHelper.respondWithOneSuccess(res, 'User added');
+        responseHelper.respondWithSuccess(res, 'User added');
     });
 };
 
@@ -493,10 +493,10 @@ exports.deleteFriend = function (req, res) {
         }
     ], function (err, result) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
-        responseHelper.respondWithOneSuccess(res, 'User deleted from friend list');
+        responseHelper.respondWithSuccess(res, 'User deleted from friend list');
     });
 };
 
@@ -504,7 +504,7 @@ exports.getUserInfo = function (req, res) {
     var userId = req.query.userId;
     User.findOne({'_id': userId}, function (err, user) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
         delete user.password;
@@ -512,7 +512,7 @@ exports.getUserInfo = function (req, res) {
         delete user.facebook;
         delete user.google;
         delete user.friends;
-        responseHelper.respondWithOneSuccess(res, user);
+        responseHelper.respondWithSuccess(res, user);
     })
 };
 
@@ -556,13 +556,13 @@ function getJWTForUser(user) {
  * @param res
  */
 exports.getGroupInfo = function (req, res) {
-    var groupId = req.query.groupId;
-    ChatGroup.findOne({'_id': groupId}, function (err, user) {
+    var groupId = req.params.groupId;
+    ChatGroup.findOne({'_id': groupId}).exec(function (err, user) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
-        responseHelper.respondWithOneSuccess(res, user);
+        responseHelper.respondWithSuccess(res, user);
     });
 };
 
@@ -587,10 +587,10 @@ exports.deleteUserFromGroup = function (req, res) {
         }
     ], function (err, result) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
-        responseHelper.respondWithOneSuccess(res, 'User deleted from group');
+        responseHelper.respondWithSuccess(res, 'User deleted from group');
     });
 };
 
@@ -614,10 +614,10 @@ exports.addUserToGroup = function (req, res) {
         }
     ], function (err, result) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
-        responseHelper.respondWithOneSuccess(res, 'User added to group');
+        responseHelper.respondWithSuccess(res, 'User added to group');
     });
 };
 
@@ -635,10 +635,10 @@ exports.createGroup = function (req, res) {
     newGroup.name = groupName;
     newGroup.addNewUser(userId, function (err, group) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
-        responseHelper.respondWithOneSuccess(res, group);
+        responseHelper.respondWithSuccess(res, group);
     });
 };
 
@@ -647,9 +647,9 @@ exports.getMyGroups = function (req, res) {
     var userId = req.jwtUser._id;
     ChatGroup.find({ users: userId }).exec(function(err, groups) {
         if (err) {
-            responseHelper.respondWithOneError(res, err, 500);
+            responseHelper.respondWithError(res, err, 500);
             throw err;
         }
-        responseHelper.respondWithOneSuccess(res, groups);
+        responseHelper.respondWithSuccess(res, groups);
     });
 };
