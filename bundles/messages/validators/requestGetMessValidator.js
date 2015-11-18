@@ -16,7 +16,7 @@ exports.validate = function(req, res, next){
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithError(res, errors, 403);
+        responseHelper.respondWithErrors(res, errors, 403);
     }
     next();
 };
@@ -28,7 +28,7 @@ exports.privateValidate = function(req, res, next){
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithError(res, errors, 403);
+        responseHelper.respondWithErrors(res, errors, 403);
     }
     next();
 };
@@ -40,7 +40,7 @@ exports.groupValidate = function(req, res, next){
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithError(res, errors, 403);
+        responseHelper.respondWithErrors(res, errors, 403);
     }
     next();
 };
@@ -59,7 +59,7 @@ exports.getAllValidate = function(req, res, next){
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithError(res, errors, 403);
+        responseHelper.respondWithErrors(res, errors, 403);
     }
     next();
 };

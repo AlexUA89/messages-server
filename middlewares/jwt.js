@@ -19,7 +19,7 @@ exports.isLoggedIn = function (req, res, next) {
         jwt.verify(token, environment.get('app_key'), function (err, decoded) {
             if (err) {
 
-                responseHelper.respondWithError(res, 'Failed to authenticate token.', 403);
+                responseHelper.respondWithErrors(res, 'Failed to authenticate token.', 403);
             } else {
                 // if everything is good, save to request for use in other routes
                 req.jwtUser = decoded;
@@ -27,7 +27,7 @@ exports.isLoggedIn = function (req, res, next) {
             }
         });
     } else {
-        responseHelper.respondWithError(res, 'No token provided.', 403);
+        responseHelper.respondWithErrors(res, 'No token provided.', 403);
     }
 };
 

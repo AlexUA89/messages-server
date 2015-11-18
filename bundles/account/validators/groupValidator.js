@@ -6,7 +6,7 @@ exports.validateCreating = function(req, res, next){
 
     var errors = req.validationErrors();
     if (errors) {
-        responseHelper.respondWithError(res, errors, 403);
+        responseHelper.respondWithErrors(res, errors, 403);
     }
     next();
 };

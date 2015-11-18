@@ -50,7 +50,7 @@ exports.facebookAction = function (req, res) {
     FB.api('me', {fields: ['id', 'name', 'email'], access_token: token}, function (result) {
 
         if (typeof result.email === 'undefined') {
-            responseHelper.respondWithError(res, 'Bad token provided.', 403);
+            responseHelper.respondWithErrors(res, 'Bad token provided.', 403);
         }
 
         User.findOne({'email': result.email}, function (err, user) {
@@ -141,7 +141,7 @@ exports.googleAction = function (req, res) {
 
         if (typeof result.emails[0].value === 'undefined') {
 
-            responseHelper.respondWithError(res, 'Bad token provided.', 403);
+            responseHelper.respondWithErrors(res, 'Bad token provided.', 403);
         }
 
         User.findOne({'email': result.emails[0].value}, function (err, user) {
@@ -235,11 +235,11 @@ exports.signupAction = function (req, res) {
 
             mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-            responseHelper.respondWithError(res, 'Go to the inbox and confirm your email.', 403);
+            responseHelper.respondWithErrors(res, 'Go to the inbox and confirm your email.', 403);
         }
         else {
 
-            responseHelper.respondWithError(res, 'User already exists.', 403);
+            responseHelper.respondWithErrors(res, 'User already exists.', 403);
         }
     });
 };
@@ -266,7 +266,7 @@ function updateLocalUser(req, res, user) {
 
         mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-        responseHelper.respondWithError(res, 'Looks like previously you were using social networks. You need to confirm your email now.', 403);
+        responseHelper.respondWithErrors(res, 'Looks like previously you were using social networks. You need to confirm your email now.', 403);
     });
 }
 
@@ -297,7 +297,7 @@ function newLocalUser(req, res) {
 
         mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-        responseHelper.respondWithError(res, 'You need to confirm your email.', 200);
+        responseHelper.respondWithErrors(res, 'You need to confirm your email.', 200);
     });
 }
 
@@ -317,13 +317,13 @@ exports.signinAction = function (req, res) {
 
         if (!user) {
 
-            responseHelper.respondWithError(res, 'No such user.', 403);
+            responseHelper.respondWithErrors(res, 'No such user.', 403);
         }
         else if (user.confirmed === false) {
 
             mailerHelper.sendResetEmailWithToken(user, 'emails/confirmation', 'Confirmation of the email', {}, req);
 
-            responseHelper.respondWithError(res, 'Go to the inbox and confirm your email.', 403);
+            responseHelper.respondWithErrors(res, 'Go to the inbox and confirm your email.', 403);
         }
         else {
             if (user.validPassword(password)) {
@@ -333,7 +333,7 @@ exports.signinAction = function (req, res) {
             }
             else {
 
-                responseHelper.respondWithError(res, 'No such user.', 403);
+                responseHelper.respondWithErrors(res, 'No such user.', 403);
             }
         }
     });
@@ -383,7 +383,7 @@ exports.resetPassAction = function (req, res) {
 
         if (!user) {
 
-            responseHelper.respondWithError(res, 'No such user.', 403);
+            responseHelper.respondWithErrors(res, 'No such user.', 403);
         }
         else {
 
@@ -446,7 +446,7 @@ exports.getAllFriends = function (req, res) {
     var userId = req.jwtUser._id;
     User.findOne({'_id': userId}).populate('friends').exec(function (err, friends) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         responseHelper.respondWithSuccess(res, friends);
@@ -470,7 +470,7 @@ exports.addNewFriend = function (req, res) {
         }
     ], function (err, result) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         responseHelper.respondWithSuccess(res, 'User added');
@@ -493,7 +493,7 @@ exports.deleteFriend = function (req, res) {
         }
     ], function (err, result) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         responseHelper.respondWithSuccess(res, 'User deleted from friend list');
@@ -504,7 +504,7 @@ exports.getUserInfo = function (req, res) {
     var userId = req.query.userId;
     User.findOne({'_id': userId}, function (err, user) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         delete user.password;
@@ -559,7 +559,7 @@ exports.getGroupInfo = function (req, res) {
     var groupId = req.params.groupId;
     ChatGroup.findOne({'_id': groupId}).exec(function (err, user) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         responseHelper.respondWithSuccess(res, user);
@@ -587,7 +587,7 @@ exports.deleteUserFromGroup = function (req, res) {
         }
     ], function (err, result) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         responseHelper.respondWithSuccess(res, 'User deleted from group');
@@ -614,7 +614,7 @@ exports.addUserToGroup = function (req, res) {
         }
     ], function (err, result) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         responseHelper.respondWithSuccess(res, 'User added to group');
@@ -635,7 +635,7 @@ exports.createGroup = function (req, res) {
     newGroup.name = groupName;
     newGroup.addNewUser(userId, function (err, group) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         responseHelper.respondWithSuccess(res, group);
@@ -647,7 +647,7 @@ exports.getMyGroups = function (req, res) {
     var userId = req.jwtUser._id;
     ChatGroup.find({ users: userId }).exec(function(err, groups) {
         if (err) {
-            responseHelper.respondWithError(res, err, 500);
+            responseHelper.respondWithErrors(res, err, 500);
             throw err;
         }
         responseHelper.respondWithSuccess(res, groups);
