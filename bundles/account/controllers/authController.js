@@ -348,7 +348,7 @@ exports.signinAction = function (req, res) {
  */
 exports.confirmEmailAction = function (req, res) {
 
-    var token = req.query.token;
+    var token = req.params.token;
 
     User.findOne({'reset_token': token}, function (err, user) {
 
