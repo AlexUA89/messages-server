@@ -3,7 +3,7 @@ var mongoose = require('libs/db'),
     Schema = mongoose.Schema;
 
 // define the schema for our user model
-var messageSchema = new Schema({
+var chatGroupSchema = new Schema({
 
     name: {
         type: String,
@@ -14,19 +14,22 @@ var messageSchema = new Schema({
 
 });
 
-messageSchema.methods.addNewUser = function (userId, callback) {
+chatGroupSchema.methods.addNewUser = function (userId, callback) {
     this.users.push(userId);
     this.save(callback);
 };
 
-messageSchema.methods.getAllUsers = function (callback) {
+chatGroupSchema.methods.getAllUsers = function (callback) {
     this.findOne({'_id': this._id}).populate('users').exec(callback);
 };
 
-messageSchema.methods.removeUser = function (friendId, callback) {
+chatGroupSchema.methods.removeUser = function (friendId, callback) {
     this.friends.pull(friendId);
     this.save(callback);
 };
 
+chatGroupSchema.methods.getAllMyGroups = function (userId, callback) {
+    this.find({ users: userId }).exec(callback);
+};
 
-module.exports = mongoose.model('ChatGroup', messageSchema);
+module.exports = mongoose.model('ChatGroup', chatGroupSchema);

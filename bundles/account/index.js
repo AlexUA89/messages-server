@@ -7,6 +7,7 @@ var config = require( 'configuration' );
 
 var signupValidatior = require('./validators/signupValidator');
 var signinValidatior = require('./validators/signinValidator');
+var groupValidatior = require('./validators/groupValidator');
 var resetPassValidator = require('./validators/resetPassValidator');
 
 var accountRouter = {
@@ -41,7 +42,11 @@ var accountRouter = {
 
         router.get('/group_delete_user/:groupId/:userId', middlewares.jwt.isLoggedIn, authController.deleteUserFromGroup);
 
-        router.get('/group_add_user/:groupId/:userId', middlewares.jwt.isLoggedIn, authController.addUserFromGroup);
+        router.get('/group_add_user/:groupId/:userId', middlewares.jwt.isLoggedIn, authController.addUserToGroup);
+
+        router.get('/group_get_my_groups', middlewares.jwt.isLoggedIn, authController.getMyGroups);
+
+        router.get('/group_create', middlewares.jwt.isLoggedIn, groupValidatior.validateCreating, authController.createGroup);
 
         // the secured route only for authenticated users, just for test
         router.get('/secured-auth', middlewares.auth.isLoggedIn, function (req, res) {

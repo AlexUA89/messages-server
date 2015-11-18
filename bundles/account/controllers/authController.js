@@ -348,7 +348,7 @@ exports.signinAction = function (req, res) {
  */
 exports.confirmEmailAction = function (req, res) {
 
-    var token = req.params.token;
+    var token = req.query.token;
 
     User.findOne({'reset_token': token}, function (err, user) {
 
@@ -414,7 +414,7 @@ exports.resetPassFormAction = function (req, res) {
  */
 exports.resetPassHandleAction = function (req, res) {
 
-    User.findOne({'reset_token': req.params.token}, function (err, user) {
+    User.findOne({'reset_token': req.query.token}, function (err, user) {
 
         if (err) {
             throw err;
@@ -457,7 +457,7 @@ exports.getAllFriends = function (req, res) {
 
 exports.addNewFriend = function (req, res) {
     var userId = req.jwtUser._id;
-    var friendId = req.params.friendId;
+    var friendId = req.query.friendId;
     async.waterfall([
         function (callback) {
             User.findOne({'_id': userId}).exec(callback);
@@ -480,7 +480,7 @@ exports.addNewFriend = function (req, res) {
 
 exports.deleteFriend = function (req, res) {
     var userId = req.jwtUser._id;
-    var friendId = req.params.friendId;
+    var friendId = req.query.friendId;
     async.waterfall([
         function (callback) {
             User.findOne({'_id': userId}).exec(callback);
@@ -501,7 +501,7 @@ exports.deleteFriend = function (req, res) {
 };
 
 exports.getUserInfo = function (req, res) {
-    var userId = req.params.userId;
+    var userId = req.query.userId;
     User.findOne({'_id': userId}, function (err, user) {
         if (err) {
             responseHelper.respondWithOneError(res, err, 500);
@@ -556,7 +556,7 @@ function getJWTForUser(user) {
  * @param res
  */
 exports.getGroupInfo = function (req, res) {
-    var groupId = req.params.groupId;
+    var groupId = req.query.groupId;
     ChatGroup.findOne({'_id': groupId}, function (err, user) {
         if (err) {
             responseHelper.respondWithOneError(res, err, 500);
@@ -573,8 +573,8 @@ exports.getGroupInfo = function (req, res) {
  * @param res
  */
 exports.deleteUserFromGroup = function (req, res) {
-    var groupId = req.params.groupId;
-    var userId = req.params.userId;
+    var groupId = req.query.groupId;
+    var userId = req.query.userId;
     async.waterfall([
         function (callback) {
             ChatGroup.findOne({'_id': groupId}).exec(callback);
@@ -599,9 +599,9 @@ exports.deleteUserFromGroup = function (req, res) {
  * @param req
  * @param res
  */
-exports.addUserFromGroup = function (req, res) {
-    var groupId = req.params.groupId;
-    var userId = req.params.userId;
+exports.addUserToGroup = function (req, res) {
+    var groupId = req.query.groupId;
+    var userId = req.query.userId;
     async.waterfall([
         function (callback) {
             ChatGroup.findOne({'_id': groupId}).exec(callback);
@@ -628,16 +628,28 @@ exports.addUserFromGroup = function (req, res) {
  * @param res
  */
 exports.createGroup = function (req, res) {
-    var groupName = req.params.groupName;
+    var groupName = req.query.group_name;
+    var userId = req.jwtUser._id;
 
     var newGroup = new ChatGroup();
     newGroup.name = groupName;
-
-    newGroup.save(function (err, group) {
+    newGroup.addNewUser(userId, function (err, group) {
         if (err) {
             responseHelper.respondWithOneError(res, err, 500);
             throw err;
         }
         responseHelper.respondWithOneSuccess(res, group);
+    });
+};
+
+
+exports.getMyGroups = function (req, res) {
+    var userId = req.jwtUser._id;
+    ChatGroup.find({ users: userId }).exec(function(err, groups) {
+        if (err) {
+            responseHelper.respondWithOneError(res, err, 500);
+            throw err;
+        }
+        responseHelper.respondWithOneSuccess(res, groups);
     });
 };
