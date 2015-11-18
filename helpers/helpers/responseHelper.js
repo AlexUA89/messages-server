@@ -5,7 +5,7 @@
  * @param error
  * @param code
  */
-exports.respondWithErrorss = function (res, errors, code) {
+exports.respondWithErrors = function (res, errors, code) {
 
     res.status(code).json({
         success: false,
