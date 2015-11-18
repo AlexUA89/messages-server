@@ -25,7 +25,7 @@ var helper = {
             if (err) {
                 throw err;
             }
-            responseHelper.respondWithSuccess(res, 'Message is sent.');
+            responseHelper.respondWithSuccess(res, result);
         });
     },
 
