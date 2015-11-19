@@ -3,6 +3,7 @@ var apiRoutes = express.Router();
 var accountRouter = require('./bundles/account');
 var messagesRouter = require('./bundles/messages');
 var eventsRouter = require('./bundles/events');
+var locationRouter = require('./bundles/location');
 
 /**
  * Set routes for the application.
@@ -14,6 +15,7 @@ exports.setRoutes = function (app) {
     if (!process.env.APPLICATION_PART || process.env.APPLICATION_PART === "another") {
         app.use(accountRouter.baseRoute, accountRouter.init(app));
         app.use(eventsRouter.baseRoute, eventsRouter.init(app));
+        app.use(locationRouter.baseRoute, locationRouter.init(app));
     }
     if (!process.env.APPLICATION_PART || process.env.APPLICATION_PART === "messages") {
         app.use(messagesRouter.baseRoute, messagesRouter.init(app));
