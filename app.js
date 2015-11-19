@@ -17,6 +17,8 @@ var requestValidator = require( 'express-validator' );
 
 var historyCleaner = require('bundles/historyCleaner');
 
+var websocket = require('./bundles/websocket');
+
 var app = express();
 
 mailerHelper.getMailer( app );
@@ -59,6 +61,8 @@ logger.crit('trying use port ' + port );
 var server = app.listen( port, function () {
     logger.crit('On port ' + port );
 } );
+
+websocket.init(server);
 
 require('libs/log');
 
