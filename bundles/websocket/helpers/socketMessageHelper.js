@@ -2,6 +2,7 @@ var async = require('neo-async');
 var Message = require('models').Message;
 var socketResponseHelper = require('./socketResponseHelper');
 var ChatGroup = require('models').ChatGroup;
+var clientsContainer = require('./clientsContainer');
 
 
 exports.isMessage = function (message) {
@@ -21,7 +22,7 @@ exports.isMessage = function (message) {
     }
 };
 
-exports.sendMessageToOtherUsers = function (message, allClients) {
+exports.sendMessageToOtherUsers = function (message) {
     var savedMessage;
     async.waterfall([
         function (callback) {
@@ -34,7 +35,10 @@ exports.sendMessageToOtherUsers = function (message, allClients) {
         function (group, callback) {
             var users = group.users;
             users.forEach(function(user) {
-                socketResponseHelper.sendData(allClients[user], savedMessage);
+                var connection = clientsContainer.getConnectionByID(user);
+                if(connection) {
+                    socketResponseHelper.sendData(connection, savedMessage);
+                }
             });
             callback();
         }

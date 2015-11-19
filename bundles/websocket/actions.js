@@ -1,18 +1,9 @@
 var logger = require('libs/log');
 var jwt = require('jsonwebtoken');
 var environment = require('configuration');
-var socketMessageHelper = require('./socketMessageHelper');
-var socketResponseHelper = require('./socketResponseHelper');
-
-var CLIENTS = {};
-
-var saveNewConnection = function (userId, connection) {
-    connection.userId = userId;
-    connection.pingTime = new Date().getTime();
-    CLIENTS[userId] = connection;
-    connection.send("200 ok");
-    logger.info('created connection with user ' + userId);
-};
+var socketMessageHelper = require('./helpers/socketMessageHelper');
+var socketResponseHelper = require('./helpers/socketResponseHelper');
+var clientsContainer = require('./helpers/clientsContainer');
 
 exports.onConnection = function (newWS) {
     var token = url.parse(ws.upgradeReq.url, true).query.token;
@@ -23,7 +14,7 @@ exports.onConnection = function (newWS) {
                 newWS.send('Wrong user token');
                 newWS.close();
             } else {
-                saveNewConnection(decoded._id, newWS);
+                clientsContainer.addNewClient(newWS, decoded._id);
             }
         });
     } else {
@@ -34,17 +25,17 @@ exports.onConnection = function (newWS) {
 
 
 exports.onCloseConnection = function (code, reason) {
-    delete CLIENTS[this.userId];
+    clientsContainer.removeClient(this);
     logger.info('deleted connection with user ' + userId + ' code: ' + code + " reason: " + reason);
 };
 
 exports.onMessage = function (message) {
     try {
         var jsonMessage = JSON.parse(message);
-        this.pingTime =  new Date().getTime();
+        clientsContainer.refreshClient(this);
         var object = socketMessageHelper.isMessage(jsonMessage);
-        if(object){
-            socketMessageHelper.sendMessageToOtherUsers(object, CLIENTS);
+        if (object) {
+            socketMessageHelper.sendMessageToOtherUsers(object);
         }
     } catch (err) {
         socketResponseHelper.respondWithErrors(this, err);
