@@ -457,7 +457,7 @@ exports.getAllFriends = function (req, res) {
 
 exports.addNewFriend = function (req, res) {
     var userId = req.jwtUser._id;
-    var friendId = req.query.friendId;
+    var friendId = req.params.friendId;
     async.waterfall([
         function (callback) {
             User.findOne({'_id': userId}).exec(callback);
