@@ -19,9 +19,10 @@ exports.respondWithErrors = function (socket, errors) {
  * @param res
  * @param msg
  */
-exports.sendData = function (socket, msg) {
+exports.sendData = function (socket, msg, code) {
     socket.send(JSON.stringify({
         success: true,
+        code: code,
         data: msg
     }));
 };

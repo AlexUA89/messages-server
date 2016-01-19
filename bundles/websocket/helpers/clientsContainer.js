@@ -24,7 +24,7 @@ exports.getConnectionByID = function (userId) {
         return null;
     }
     var time = new Date().getTime();
-    if (CLIENTS[userId].pingTime < (time - frequencySocketPingMessage * 1000 - 1000)) {
+    if (CLIENTS[userId].pingTime < (time - frequencySocketPingMessage * 1000 * 60 - 1000)) {
         CLIENTS[userId].close();
         delete CLIENTS[userId];
         logger.info('TIMEOUT removed connection with user ' + userId);

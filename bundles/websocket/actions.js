@@ -23,7 +23,6 @@ exports.onConnection = function (newWS) {
     }
 };
 
-
 exports.onCloseConnection = function (code, reason) {
     clientsContainer.removeClient(this);
     logger.info('deleted connection with user ' + userId + ' code: ' + code + " reason: " + reason);
@@ -33,6 +32,8 @@ exports.onMessage = function (message) {
     try {
         var jsonMessage = JSON.parse(message);
         clientsContainer.refreshClient(this);
+        var messageCode = jsonMessage.code;
+        socketResponseHelper.sendData(this, null, messageCode);
         var object = socketMessageHelper.isMessage(jsonMessage);
         if (object) {
             socketMessageHelper.sendMessageToOtherUsers(object);

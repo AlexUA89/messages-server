@@ -17,7 +17,7 @@ var accountRouter = {
 
     init: function (app) {
 
-        router.get('/clients_parameters',  middlewares.jwt.isLoggedIn, function(req,res) {
+        router.get('/clients_parameters', function(req,res) {
             responseHelper.respondWithSuccess(res,config.get('clientConfig') );
         });
 

@@ -22,6 +22,10 @@ exports.isMessage = function (message) {
     }
 };
 
+exports.isPing = function (message) {
+
+};
+
 exports.sendMessageToOtherUsers = function (message) {
     var savedMessage;
     async.waterfall([
@@ -48,5 +52,7 @@ exports.sendMessageToOtherUsers = function (message) {
         }
     });
 };
+
+//TODO implement private message sending
 
 
