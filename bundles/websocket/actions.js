@@ -1,12 +1,13 @@
 var logger = require('libs/log');
 var jwt = require('jsonwebtoken');
 var environment = require('configuration');
+var url = require('url');
 var socketMessageHelper = require('./helpers/socketMessageHelper');
 var socketResponseHelper = require('./helpers/socketResponseHelper');
 var clientsContainer = require('./helpers/clientsContainer');
 
 exports.onConnection = function (newWS) {
-    var token = url.parse(ws.upgradeReq.url, true).query.token;
+    var token = url.parse(newWS.upgradeReq.url, true).query.token;
 
     if (token) {
         jwt.verify(token, environment.get('app_key'), function (err, decoded) {
@@ -23,23 +24,23 @@ exports.onConnection = function (newWS) {
     }
 };
 
-exports.onCloseConnection = function (code, reason) {
-    clientsContainer.removeClient(this);
+exports.onCloseConnection = function (userId, code, reason) {
+    clientsContainer.removeClient(userId);
     logger.info('deleted connection with user ' + userId + ' code: ' + code + " reason: " + reason);
 };
 
-exports.onMessage = function (message) {
+exports.onMessage = function (userId, message) {
     try {
         var jsonMessage = JSON.parse(message);
-        clientsContainer.refreshClient(this);
+        clientsContainer.refreshClient(userId);
         var messageCode = jsonMessage.code;
-        socketResponseHelper.sendData(this, null, messageCode);
+        socketResponseHelper.sendData(clientsContainer.getConnectionByID(userId), null, messageCode);
         var object = socketMessageHelper.isMessage(jsonMessage);
         if (object) {
             socketMessageHelper.sendMessageToOtherUsers(object);
         }
     } catch (err) {
-        socketResponseHelper.respondWithErrors(this, err);
+        socketResponseHelper.respondWithErrors(clientsContainer.getConnectionByID(userId), err);
     }
 };
 

@@ -8,10 +8,10 @@ var webSocket = {
         var wss = new WebSocketServer({ server: server });
 
         wss.on('connection', actions.onConnection);
-
-        wss.on('close', actions.onCloseConnection);
-
-        wss.on('message', actions.onMessage);
+        //
+        //wss.on('close', actions.onCloseConnection);
+        //
+        //wss.on('message', actions.onMessage);
 
         return wss;
     }
