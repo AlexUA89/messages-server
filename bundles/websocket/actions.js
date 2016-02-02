@@ -35,6 +35,7 @@ exports.onMessage = function (userId, message) {
         clientsContainer.refreshClient(userId);
         var messageCode = jsonMessage.code;
         socketResponseHelper.sendData(clientsContainer.getConnectionByID(userId), null, messageCode);
+        logger.info('have sent ok to userId');
         var object = socketMessageHelper.isMessage(jsonMessage);
         if (object) {
             socketMessageHelper.sendMessageToOtherUsers(object);
