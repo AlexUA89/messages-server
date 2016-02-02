@@ -31,6 +31,7 @@ exports.onCloseConnection = function (userId, code, reason) {
 
 exports.onMessage = function (userId, message) {
     try {
+        logger.info('received message from user '+userId);
         var jsonMessage = JSON.parse(message);
         clientsContainer.refreshClient(userId);
         var messageCode = jsonMessage.code;
