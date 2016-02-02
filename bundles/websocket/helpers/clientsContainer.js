@@ -9,7 +9,7 @@ exports.addNewClient = function (connection, userId) {
     connection.userId = userId;
     connection.pingTime = new Date().getTime();
     CLIENTS[userId] = connection;
-    connection.send("200 ok");
+    connection.send("created connection 200 ok");
     connection.onclose = function (event) {
         actions.onCloseConnection(userId, event.code, event.reason)
     };
