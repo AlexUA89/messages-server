@@ -13,8 +13,7 @@ exports.validate = function (req, res, next) {
     var errors = req.validationErrors();
     if (errors) {
         responseHelper.respondWithErrors(res, errors, 403);
-    }
-    next();
+    } else next();
 };
 
 
@@ -35,6 +34,5 @@ exports.validateNewPass = function(req, res, next) {
         res.render('auth/reset', {
             errors: errors
         });
-    }
-    next();
+    } else next();
 };

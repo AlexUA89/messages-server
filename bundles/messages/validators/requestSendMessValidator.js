@@ -13,6 +13,5 @@ exports.validate = function (req, res, next) {
     var errors = req.validationErrors();
     if (errors) {
         responseHelper.respondWithErrors(res, errors, 403);
-    }
-    next();
+    } else next();
 };
